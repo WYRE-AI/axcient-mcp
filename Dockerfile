@@ -1,6 +1,6 @@
 # Multi-stage build for efficient container size.
 # Build with: docker build --platform linux/amd64 --build-arg GITHUB_TOKEN=$(gh auth token) -t axcient-mcp .
-FROM node:22-alpine AS builder
+FROM node:26-alpine AS builder
 
 ARG VERSION="unknown"
 ARG COMMIT_SHA="unknown"
@@ -27,7 +27,7 @@ RUN npm run build
 RUN npm prune --omit=dev && npm cache clean --force
 
 # Production stage
-FROM node:22-alpine AS production
+FROM node:26-alpine AS production
 
 RUN apk -U upgrade --no-cache
 
