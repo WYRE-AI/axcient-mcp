@@ -2,7 +2,7 @@
 
 MCP server for [Axcient x360Recover](https://developer.axcient.com/x360recover/) — BCDR
 clients, devices, backup jobs, vaults, and appliances. Built on
-[`@wyre-technology/node-axcient`](https://github.com/wyre-technology/node-axcient) and the
+[`@wyre-technology/node-axcient`](https://github.com/WYRE-AI/node-axcient) and the
 MCP v2 SDK, serving both the 2025-era `initialize` handshake and the 2026-07-28 stateless
 envelope from a single dual-era HTTP entrypoint.
 

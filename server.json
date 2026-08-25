@@ -1,18 +1,18 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
-  "name": "io.github.wyre-technology/axcient-mcp",
+  "name": "io.github.WYRE-AI/axcient-mcp",
   "title": "Axcient x360Recover",
   "description": "MCP server for Axcient x360Recover — BCDR clients, devices, jobs, vaults, and appliances.",
   "repository": {
-    "url": "https://github.com/wyre-technology/axcient-mcp",
+    "url": "https://github.com/WYRE-AI/axcient-mcp",
     "source": "github"
   },
   "version": "0.0.0",
-  "websiteUrl": "https://github.com/wyre-technology/axcient-mcp",
+  "websiteUrl": "https://github.com/WYRE-AI/axcient-mcp",
   "packages": [
     {
       "registryType": "oci",
-      "identifier": "ghcr.io/wyre-technology/axcient-mcp:0.0.0",
+      "identifier": "ghcr.io/wyre-ai/axcient-mcp:0.0.0",
       "transport": {
         "type": "stdio"
       },
