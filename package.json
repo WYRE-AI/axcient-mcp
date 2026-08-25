@@ -1,5 +1,5 @@
 {
-  "name": "@wyre-technology/axcient-mcp",
+  "name": "@wyre-ai/axcient-mcp",
   "version": "0.0.0-semantically-released",
   "description": "Axcient x360Recover MCP server for Claude — BCDR clients, devices, jobs, vaults, appliances",
   "type": "module",
@@ -26,7 +26,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/wyre-technology/axcient-mcp.git"
+    "url": "git+https://github.com/WYRE-AI/axcient-mcp.git"
   },
   "author": "WYRE Technology",
   "license": "Apache-2.0",
