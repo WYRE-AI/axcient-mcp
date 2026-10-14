@@ -56,9 +56,13 @@ ENV NODE_ENV=production
 ENV LOG_LEVEL=info
 ENV MCP_TRANSPORT=http
 ENV MCP_HTTP_PORT=8080
+# All interfaces inside the container. Startup still refuses to listen without
+# a real CONDUIT_S2S_SECRET. MCP_ALLOW_INSECURE_DEV=1 binds 127.0.0.1 only, so
+# this 0.0.0.0 default does not apply to the insecure bypass.
 ENV MCP_HTTP_HOST=0.0.0.0
-# Default to env mode; set to 'gateway' for hosted deployment behind the WYRE gateway
-ENV AUTH_MODE=env
+# Gateway mode reads the API key from X-Axcient-Api-Key and does not fall
+# back to AXCIENT_API_KEY.
+ENV AUTH_MODE=gateway
 
 CMD ["node", "dist/index.js"]
 

@@ -16,6 +16,9 @@ export AXCIENT_API_KEY=your-key
 npm run build
 npm start   # stdio transport
 
-# or HTTP transport:
-MCP_TRANSPORT=http npm start
+# HTTP transport (refuses to start until CONDUIT_S2S_SECRET is set):
+CONDUIT_S2S_SECRET="$CONDUIT_S2S_SECRET" MCP_TRANSPORT=http npm start
+
+# Local HTTP only, without a service-to-service secret (binds 127.0.0.1):
+MCP_ALLOW_INSECURE_DEV=1 MCP_TRANSPORT=http npm start
 ```

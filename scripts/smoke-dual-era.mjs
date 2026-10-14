@@ -12,6 +12,7 @@
 //   node scripts/smoke-dual-era.mjs
 
 import { spawn } from 'node:child_process';
+import { createHmac } from 'node:crypto';
 import { existsSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -25,6 +26,19 @@ const GATEWAY_BASE = `http://127.0.0.1:${GATEWAY_PORT}`;
 
 /** The gateway-injected credential header, per the conduit vendor-config headerMapping. */
 const CRED_HEADERS = { 'X-Axcient-Api-Key': 'gateway-api-key' };
+
+/** Not a known placeholder. HTTP startup refuses to listen without this. */
+const S2S_SECRET = 'smoke-s2s-do-not-log-7f3a9c';
+
+function mintS2sHeader(secret = S2S_SECRET, unixSeconds = Math.floor(Date.now() / 1000)) {
+  const message = `t=${unixSeconds}`;
+  const hex = createHmac('sha256', secret).update(message).digest('hex');
+  return `${message},v1=${hex}`;
+}
+
+function s2sHeaders() {
+  return { 'X-Gateway-S2S': mintS2sHeader() };
+}
 
 const failures = [];
 function check(label, ok, detail = '') {
@@ -52,6 +66,7 @@ async function legacyPost(body) {
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json, text/event-stream',
+      ...s2sHeaders(),
     },
     body: JSON.stringify(body),
   });
@@ -80,6 +95,7 @@ async function gatewayLeg(expectedToolCount) {
       MCP_TRANSPORT: 'http',
       MCP_HTTP_PORT: String(GATEWAY_PORT),
       MCP_HTTP_HOST: '127.0.0.1',
+      CONDUIT_S2S_SECRET: S2S_SECRET,
       LOG_LEVEL: 'error',
     },
     stdio: ['ignore', 'inherit', 'inherit'],
@@ -88,7 +104,7 @@ async function gatewayLeg(expectedToolCount) {
   const post = (headers, body) =>
     fetch(`${GATEWAY_BASE}/mcp`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json, text/event-stream', ...headers },
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json, text/event-stream', ...s2sHeaders(), ...headers },
       body: JSON.stringify(body),
     });
   const toolsList = { jsonrpc: '2.0', id: 1, method: 'tools/list', params: {} };
@@ -152,7 +168,9 @@ async function modernLeg() {
     { name: 'smoke-modern', version: '0.0.0' },
     { versionNegotiation: { mode: 'auto' } }
   );
-  const transport = new StreamableHTTPClientTransport(new URL(`${BASE}/mcp`));
+  const transport = new StreamableHTTPClientTransport(new URL(`${BASE}/mcp`), {
+    requestInit: { headers: s2sHeaders() },
+  });
   await client.connect(transport);
   const negotiated = client.getNegotiatedProtocolVersion?.();
   check('client negotiated the 2026-07-28 era', negotiated === '2026-07-28', `negotiated=${negotiated}`);
@@ -176,6 +194,7 @@ async function main() {
       MCP_TRANSPORT: 'http',
       MCP_HTTP_PORT: String(PORT),
       MCP_HTTP_HOST: '127.0.0.1',
+      CONDUIT_S2S_SECRET: S2S_SECRET,
       // env-mode dummy credential — tools/list never touches the vendor API
       AXCIENT_API_KEY: 'dummy-api-key',
       LOG_LEVEL: 'error',
